@@ -1,0 +1,85 @@
+{
+  "manifest_version": 3,
+  "name": "Saaransh",
+  "version": "0.1.0",
+  "description": "Feature-rich modular extension",
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab",
+    "identity",
+    "identity.email",
+    "tabs",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://*.firebaseio.com/",
+    "https://*.googleapis.com/",
+    "https://accounts.google.com/",
+    "https://www.googleapis.com/"
+  ],
+  "key": "hgafeohhehlhegmpepebfgameppehojp",
+  
+  "action": {
+  },
+  "background": {
+    "service_worker": "src/background/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": [
+        "src/features/saraanshYT/index.js",
+        "src/core/prompts.js"
+      ],
+      "css": [
+        "src/ui/saraanshYTBtn.css",
+        "src/ui/saraanshYTOpt.css",
+        "src/ui/saraanshLogo.css",
+        "src/core/userOption.css", 
+        "src/features/saraanshYT/troubleshoot.css"
+      ],
+      "run_at": "document_idle"
+    },
+
+    {
+      "matches": ["https://leetcode.com/problems/*"],
+      "js": ["src/features/saraanshLeetCode/index.js"],
+      "css": ["src/ui/saraanshLogo.css", "src/ui/saraanshYTBtn.css", "src/features/saraanshLeetCode/leetUI/leet.css"],
+      "run_at": "document_idle"
+    },
+
+    {
+      "matches": ["https://mail.google.com/mail/u/0/*"],
+      "js": ["src/features/saraanshWriteBetter/index.js"],
+
+      "css": [
+        "src/ui/saraanshLogo.css",
+        "src/features/saraanshWriteBetter/writeBetter.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+   "icons": {
+    "16": "src/icon/saraanshIcon.png",
+    "48": "src/icon/saraanshIcon.png",
+    "128": "src/icon/saraanshIcon.png"
+  }, 
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/core/userOption.css",
+        "src/ui/saraanshYTBtn.css",
+        "src/ui/saraanshYTOpt.css",
+        "src/ui/saraanshLogo.css",
+        "src/features/saraanshWriteBetter/writeBetter.css",
+        "src/core/preview.html",
+        "src/core/preview.js", 
+        "src/features/saraanshLeetCode/leetUI/leet.css", 
+        "src/features/saraanshYT/troubleshoot.css" 
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

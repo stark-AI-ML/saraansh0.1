@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Settings Dropdown</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Body and Font styles */
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 50px 20px; /* Added top padding */
+      overflow-x: hidden;
+    }
+
+    /* Main wrapper for the button and dropdown */
+    .ai-settings-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Toggle Button */
+    .settings-toggle-btn {
+      background: linear-gradient(45deg, #8a2be2, #5d0ba6);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(138, 43, 226, 0.5);
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .settings-toggle-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(138, 43, 226, 0.6);
+    }
+
+    .settings-toggle-btn .arrow {
+      transition: transform 0.3s ease;
+      font-size: 12px;
+    }
+
+    .settings-toggle-btn.open .arrow {
+      transform: rotate(180deg);
+    }
+    
+    /* MODIFIED: Dropdown container for perfect centering! */
+    .dropdown-container {
+      position: absolute;
+      top: calc(100% + 15px); /* Position below the button with a nice gap */
+      left: 50%; /* Align to the center of the button's wrapper */
+      width: 500px;
+      max-width: 95vw;
+      z-index: 1000;
+      
+      /* Animation & Visibility */
+      opacity: 0;
+      visibility: hidden;
+      /* Combine horizontal centering with a vertical animation */
+      transform: translateX(-50%) translateY(-20px);
+      transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
+    }
+
+    /* MODIFIED: Show state for the dropdown */
+    .dropdown-container.show {
+      opacity: 1;
+      visibility: visible;
+      /* Final centered position */
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* DROPDOWN CONTENT */
+    .dropdown-content {
+      width: 100%;
+      background: rgba(40, 25, 70, 0.85);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(176, 108, 255, 0.4);
+      backdrop-filter: blur(15px);
+      display: block;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .dropdown-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #b06cff, transparent);
+    }
+
+    /* ITEM STYLING */
+    .dropdown-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(176, 108, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .dropdown-item:hover {
+      background: rgba(176, 108, 255, 0.05);
+      border-radius: 8px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-icon {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(100, 75, 150, 0.3);
+      border-radius: 12px;
+      margin-right: 15px;
+      color: #b06cff;
+      border: 1px solid rgba(176, 108, 255, 0.3);
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      margin-top: 4px;
+    }
+
+    .item-content {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .item-title {
+      font-weight: 600;
+      color: #f0e6ff;
+      font-size: 15px;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .item-value {
+      color: #d0c3ff;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .token-value {
+      font-family: 'Courier New', monospace;
+      background: rgba(40, 25, 70, 0.5);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(176, 108, 255, 0.3);
+      display: inline-block;
+      margin-top: 6px;
+      color: #e0d6ff;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-all;
+    }
+
+    .api-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid rgba(176, 108, 255, 0.3);
+      border-radius: 10px;
+      font-size: 14px;
+      margin-top: 8px;
+      background: rgba(40, 25, 70, 0.5);
+      color: #e0d6ff;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .api-input:focus {
+      outline: none;
+      border-color: #8a2be2;
+      box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+      background: rgba(40, 25, 70, 0.7);
+    }
+    
+    /* CUSTOM AI MODEL SELECTOR */
+    .custom-select-wrapper {
+      position: relative;
+      width: 100%;
+      margin-top: 8px;
+    }
+    
+    .custom-select {
+      position: relative;
+    }
+    
+    .custom-select-trigger {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid rgba(176, 108, 255, 0.3);
+      border-radius: 10px;
+      font-size: 14px;
+      background: rgba(40, 25, 70, 0.5);
+      color: #e0d6ff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .custom-select.open .custom-select-trigger {
+      border-color: #8a2be2;
+      box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+      background: rgba(40, 25, 70, 0.7);
+    }
+    
+    .custom-select-trigger .model-logo {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      filter: brightness(1.2);
+    }
+    
+    .custom-select .arrow {
+      margin-left: auto;
+      color: #b06cff;
+      transition: transform 0.3s ease;
+      font-size: 12px;
+    }
+    
+    .custom-select.open .arrow {
+      transform: rotate(180deg);
+    }
+
+    .custom-options {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: rgba(40, 25, 70, 0.95);
+      border: 1px solid rgba(176, 108, 255, 0.4);
+      border-radius: 10px;
+      overflow: hidden;
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    
+    .custom-select.open .custom-options {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .custom-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      font-size: 14px;
+      color: #e0d6ff;
+      border-bottom: 1px solid rgba(176, 108, 255, 0.1);
+    }
+    
+    .custom-option:last-child {
+      border-bottom: none;
+    }
+    
+    .custom-option:hover {
+      background-color: rgba(138, 43, 226, 0.2);
+    }
+    
+    .custom-option .model-logo {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      filter: brightness(1.2);
+    }
+    
+    .model-logo.invert-color {
+      filter: invert(1) brightness(1.5);
+    }
+
+    /* BUTTON STYLING */
+    .option {
+      margin: 3px;
+      position: relative;
+      padding: 10px 18px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 15px;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+      background: rgba(100, 75, 150, 0.2);
+      border: 1px solid rgba(176, 108, 255, 0.3);
+      color: #e0d6ff;
+      text-align: center;
+      display: inline-block;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .option:hover {
+      background: rgba(138, 43, 226, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(138, 43, 226, 0.4);
+    }
+
+    .option.active {
+      background: linear-gradient(45deg, #8a2be2, #5d0ba6);
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .save-btn {
+      flex: 1;
+      background: linear-gradient(45deg, #8a2be2, #5d0ba6);
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(138, 43, 226, 0.5);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+
+    .save-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(138, 43, 226, 0.6);
+    }
+
+    .token-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .token-action-btn {
+      padding: 6px 12px;
+      background: rgba(100, 75, 150, 0.2);
+      border: 1px solid rgba(176, 108, 255, 0.3);
+      border-radius: 20px;
+      color: #e0d6ff;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .token-action-btn:hover {
+      background: rgba(138, 43, 226, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    /* Status indicator */
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+      font-size: 12px;
+      color: #8aff80;
+      background: rgba(138, 255, 128, 0.1);
+      padding: 4px 8px;
+      border-radius: 12px;
+    }
+    
+    .status-indicator::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #8aff80;
+      display: inline-block;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 15px;
+        align-items: flex-start;
+      }
+      
+      .dropdown-content {
+        padding: 15px;
+      }
+      
+      .dropdown-item {
+        padding: 12px 0;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .item-icon {
+        margin-bottom: 10px;
+        width: 40px;
+        height: 40px;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .option {
+        width: 100%;
+        text-align: center;
+      }
+      
+      .token-actions {
+        justify-content: center;
+      }
+      
+      .custom-select-trigger {
+        padding: 10px 12px;
+      }
+      
+      .custom-option {
+        padding: 10px 12px;
+      }
+      
+      .item-title {
+        font-size: 14px;
+      }
+      
+      .item-value {
+        font-size: 13px;
+      }
+    }
+    
+    @media (max-width: 400px) {
+      body {
+        padding: 20px 10px;
+      }
+      
+      .dropdown-content {
+        padding: 12px;
+      }
+      
+      .dropdown-item {
+        padding: 10px 0;
+      }
+      
+      .item-icon {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .option {
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+      
+      .save-btn {
+        padding: 10px 15px;
+        font-size: 13px;
+      }
+      
+      .token-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .token-action-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+    <button  class="settings-toggle-btn" id="settingsToggleBtn">
+      <i class="fas fa-robot"></i>
+      <span>AI Settings</span>
+      <i class="fas fa-chevron-down arrow"></i>
+    </button>
+
+
+<div  class="ai-settings-wrapper">
+    <div class="dropdown-container" id="dropdownContainer">
+      <div class="dropdown-content">
+        <div class="dropdown-item">
+          <div class="item-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="item-content">
+            <div class="item-title">User Account</div>
+            <div class="item-value">admin@example.com</div>
+            <div class="option" style="margin-top: 10px; padding: 8px 16px; display: inline-flex; align-items: center;">
+              <i class="fas fa-user-shield" style="margin-right: 8px;"></i> Administrator
+              <span class="status-indicator">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dropdown-item">
+          <div class="item-icon">
+            <i class="fas fa-coins"></i>
+          </div>
+          <div class="item-content">
+             <div class="option" style="margin-top: 10px; padding: 8px 16px; display: inline-flex; align-items: center;">
+              <i class="fas fa-coins" style="margin-right: 8px;"></i> 
+              TOKENS LEFT: <span id="tokenLeft" style="margin-left: 6px; font-weight: 700;">100</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dropdown-item">
+          <div class="item-icon">
+            <i class="fas fa-key"></i>
+          </div>
+          <div class="item-content">
+            <div class="item-title">API Token</div>
+            <div class="item-value">
+              Token:
+              <span class="token-value" id="tokenValue">5f4dcc3b5aa765d61d8327deb882cf99</span>
+            </div>
+            <div class="token-actions">
+              <div class="token-action-btn copy-btn">
+                <i class="fas fa-copy"></i> Copy
+              </div>
+              <div class="token-action-btn regenerate-btn">
+                <i class="fas fa-sync-alt"></i> Regenerate
+              </div>
+              <div class="token-action-btn show-btn">
+                <i class="fas fa-eye"></i> Show
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dropdown-item">
+          <div class="item-icon">
+            <i class="fas fa-brain"></i>
+          </div>
+          <div class="item-content">
+            <div class="item-title">Select AI Model</div>
+            <div class="custom-select-wrapper">
+              <div class="custom-select">
+                <div class="custom-select-trigger">
+                  <img src="../Icons/gemini-color.svg" alt="Gemini Logo" class="model-logo" />
+                  <span class="selected-option-text">Gemini 1.5 Pro</span>
+                  <i class="fas fa-chevron-down arrow"></i>
+                </div>
+                <div class="custom-options">
+                  <div class="custom-option" data-value="gemini-pro">
+                    <img src="../Icons/gemini-color.svg" alt="Gemini Logo" class="model-logo" />
+                    <span>Gemini</span>
+                  </div>
+                  <div class="custom-option" data-value="gpt-loss">
+                    <img src="../Icons/chatgpt-6.svg" alt="OpenAI Logo" class="model-logo invert-color" />
+                    <span>GPT-loss</span>
+                  </div>
+                  <div class="custom-option" data-value="deepseek-R1">
+                    <img src="../Icons/deepseek-color.svg" alt="deepseek logo" class="model-logo invert-color" />
+                    <span>Deepsee-R1</span>
+                  </div>
+                  <div class="custom-option" data-value="qwen-3">
+                    <img src="../Icons/qwen-color.svg" alt="qwen logo" class="model-logo" />
+                    <span>qwen-3</span>
+                  </div>
+                  <!-- <div class="custom-option" data-value="mistral-large">
+                    <img src="https://mistral.ai/images/logo_hub840a1a2f327576352f5517a224c6553_1366_256x0_resize_q97_h2_lanczos_3.webp" alt="Mistral Logo" class="model-logo invert-color" />
+                    <span>Mistral Large</span>
+                  </div>
+                  <div class="custom-option" data-value="command-r-plus">
+                    <img src="https://cohere.com/images/logo-white.svg" alt="Cohere Logo" class="model-logo invert-color" />
+                    <span>Command R+</span>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+            <div class="item-value" style="margin-top: 8px">
+              Choose the model for your tasks.
+            </div>
+          </div>
+        </div>
+        
+        <div class="dropdown-item">
+          <div class="item-icon">
+            <i class="fas fa-plug"></i>
+          </div>
+          <div class="item-content">
+            <div class="item-title">Your API Key</div>
+            <input type="text" class="api-input" placeholder="Enter your API key" />
+            <div class="item-value" style="margin-top: 8px">
+              Enter any custom API key you want to use.
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="save-btn">
+            <i class="fas fa-save"></i> Save Settings
+          </button>
+          <button class="option">
+            <i class="fas fa-cog"></i> More Options
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // --- Main Dropdown Toggle Logic ---
+      const settingsToggleBtn = document.getElementById('settingsToggleBtn');
+      const dropdownContainer = document.getElementById('dropdownContainer');
+      const settingsWrapper = document.querySelector('.ai-settings-wrapper');
+      
+      settingsToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        dropdownContainer.classList.toggle('show');
+        settingsToggleBtn.classList.toggle('open');
+      });
+
+      // Close dropdown when clicking outside of it
+      window.addEventListener('click', (e) => {
+        if (!settingsWrapper.contains(e.target)) {
+          if (dropdownContainer.classList.contains('show')) {
+            dropdownContainer.classList.remove('show');
+            settingsToggleBtn.classList.remove('open');
+          }
+        }
+      });
+      
+      // --- Custom Select (AI Model) Logic ---
+      const customSelect = document.querySelector(".custom-select");
+      const trigger = customSelect.querySelector(".custom-select-trigger");
+      const options = customSelect.querySelectorAll(".custom-option");
+      const selectedText = trigger.querySelector(".selected-option-text");
+      const selectedLogo = trigger.querySelector(".model-logo");
+
+      trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        customSelect.classList.toggle("open");
+      });
+
+      options.forEach((option) => {
+        option.addEventListener("click", () => {
+          selectedText.textContent = option.querySelector("span").textContent;
+          const newLogoSrc = option.querySelector(".model-logo").src;
+          selectedLogo.src = newLogoSrc;
+          const newLogoClasses = option.querySelector(".model-logo").classList;
+          selectedLogo.className = 'model-logo';
+          newLogoClasses.forEach(cls => {
+            if (cls !== 'model-logo') {
+               selectedLogo.classList.add(cls);
+            }
+          });
+          customSelect.classList.remove("open");
+          console.log("Selected model:", option.getAttribute("data-value"));
+        });
+      });
+      
+      // --- Token Actions Functionality ---
+      const tokenValue = document.getElementById('tokenValue');
+      const copyBtn = document.querySelector('.copy-btn');
+      const regenerateBtn = document.querySelector('.regenerate-btn');
+      const showBtn = document.querySelector('.show-btn');
+      let originalToken = '5f4dcc3b5aa765d61d8327deb882cf99';
+      
+      copyBtn.addEventListener('click', async () => {
+        try {
+          const textToCopy = tokenValue.textContent.includes('*') 
+            ? originalToken 
+            : tokenValue.textContent;
+          await navigator.clipboard.writeText(textToCopy);
+          
+          copyBtn.style.background = 'rgba(138, 255, 128, 0.2)';
+          copyBtn.style.borderColor = 'rgba(138, 255, 128, 0.4)';
+          copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          
+          setTimeout(() => {
+            copyBtn.style.background = '';
+            copyBtn.style.borderColor = '';
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+      });
+      
+      showBtn.addEventListener('click', () => {
+        if (tokenValue.textContent.includes('*')) {
+          tokenValue.textContent = originalToken;
+          showBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
+        } else {
+          tokenValue.textContent = '********************************';
+          showBtn.innerHTML = '<i class="fas fa-eye"></i> Show';
+        }
+      });
+      
+      regenerateBtn.addEventListener('click', () => {
+        const newToken = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+        originalToken = newToken; // Store the new token
+        tokenValue.textContent = newToken;
+        
+        // Ensure button is in the correct state
+        showBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>saraansh</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --font-devanagari: "Poppins", sans-serif;
+        --primary-dark: #0f0c29;
+        --primary-mid: #302b63;
+        --primary-light: #5b2cff;
+        --accent-light: #c8b6ff;
+        --accent-lighter: #ffd6ff;
+        --text-color: #e6e6fa;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: var(--primary-dark);
+        color: var(--text-color);
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      #background-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        z-index: 1;
+        position: relative;
+      }
+
+      /* Download Button */
+      .download-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 2rem;
+      }
+
+      .download-btn {
+        background: linear-gradient(
+          135deg,
+          var(--primary-light),
+          var(--primary-mid)
+        );
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 50px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        font-size: 1rem;
+        box-shadow: 0 4px 15px rgba(91, 44, 255, 0.3);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .download-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .download-btn:hover::before {
+        left: 100%;
+      }
+
+      .download-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(91, 44, 255, 0.5);
+      }
+
+      .download-btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 10px rgba(91, 44, 255, 0.3);
+      }
+
+      .download-btn .icon {
+        transition: transform 0.3s ease;
+      }
+
+      .download-btn:hover .icon {
+        transform: translateY(2px);
+      }
+
+      .download-btn .pulse {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.3);
+        opacity: 0;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 0.7;
+        }
+        70% {
+          transform: scale(1.1);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0;
+        }
+      }
+
+      .header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+      }
+
+      .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .saraansh-logo {
+        width: 180px;
+        height: 180px;
+        filter: drop-shadow(0 0 15px rgba(123, 77, 255, 0.5));
+      }
+
+      .logo-svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .name {
+        font-size: 4rem;
+        font-weight: 700;
+        color: #a084dc;
+        margin-top: 1rem;
+        text-shadow: 0 0 8px rgba(123, 77, 255, 0.3);
+        letter-spacing: 2px;
+      }
+
+      .summary-container {
+        background: rgba(15, 12, 41, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(123, 77, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .summary-container::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(123, 77, 255, 0.1) 0%,
+          rgba(15, 12, 41, 0) 70%
+        );
+        z-index: -1;
+      }
+
+      .summary-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: var(--accent-light);
+        text-align: center;
+      }
+
+      .summary-content {
+        line-height: 1.7;
+        font-size: 1.1rem;
+      }
+
+      .summary-content p {
+        margin-bottom: 1.2rem;
+      }
+
+      /* Logo animation */
+      .revolve {
+        animation: revolve 20s linear infinite;
+        transform-origin: center;
+      }
+
+      @keyframes revolve {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .orbit {
+        animation: orbit 15s linear infinite;
+        transform-origin: center;
+      }
+
+      @keyframes orbit {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .orbit--a {
+        animation-duration: 25s;
+        animation-direction: reverse;
+      }
+
+      .orbit--b {
+        animation-duration: 18s;
+      }
+
+      .orbit--c {
+        animation-duration: 22s;
+        animation-direction: reverse;
+      }
+
+      .dot {
+        animation: pulse 3s ease-in-out infinite alternate;
+        fill: #ffd6ff; /* Fixed: Changed from black to light color */
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 0.5;
+          r: 0.5;
+        }
+        100% {
+          opacity: 1;
+          r: 1.5;
+        }
+      }
+
+      /* Feature cards */
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .feature-card {
+        background: rgba(48, 43, 99, 0.5);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(123, 77, 255, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: var(--accent-light);
+      }
+
+      .feature-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        color: var(--accent-lighter);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .name {
+          font-size: 3rem;
+        }
+
+        .summary-container {
+          padding: 1.5rem;
+        }
+
+        .saraansh-logo {
+          width: 150px;
+          height: 150px;
+        }
+
+        .download-btn {
+          padding: 10px 18px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .name {
+          font-size: 2.5rem;
+        }
+
+        .summary-container {
+          padding: 1.2rem;
+        }
+
+        .saraansh-logo {
+          width: 120px;
+          height: 120px;
+        }
+
+        .download-btn {
+          padding: 8px 16px;
+          font-size: 0.85rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="background-canvas"></canvas>
+
+    <div class="container" id="contentToExport">
+      <!-- Download Button Container -->
+      <div class="download-container">
+        <button class="download-btn" id="downloadPdf">
+          <div class="pulse"></div>
+          <svg
+            class="icon"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 16L12 4M12 16L8 12M12 16L16 12"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M4 20H20"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="header">
+        <div class="logo-container">
+          <div class="saraansh-logo" role="img" aria-label="saraansh logo">
+            <svg
+              class="logo-svg"
+              viewBox="0 0 100 100"
+              focusable="false"
+              aria-hidden="true"
+            >
+              <defs>
+                <!-- Dark color palette with glowing effects -->
+                <radialGradient id="bgGlow" cx="50%" cy="50%" r="70%">
+                  <stop offset="0%" stop-color="#5b2cff" stop-opacity="0.5" />
+                  <stop offset="55%" stop-color="#302b63" stop-opacity="0.3" />
+                  <stop offset="100%" stop-color="#0f0c29" stop-opacity="0.8" />
+                </radialGradient>
+
+                <linearGradient id="glyphGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#ffd6ff" />
+                  <stop offset="100%" stop-color="#c8b6ff" />
+                </linearGradient>
+
+                <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#c8b6ff" />
+                  <stop offset="60%" stop-color="#7c4dff" />
+                  <stop offset="100%" stop-color="#5b2cff" />
+                </linearGradient>
+
+                <!-- Glow filter for revolving ring -->
+                <filter
+                  id="glowFilter"
+                  x="-50%"
+                  y="-50%"
+                  width="200%"
+                  height="200%"
+                >
+                  <feGaussianBlur
+                    in="SourceGraphic"
+                    stdDeviation="2.5"
+                    result="blur"
+                  />
+                  <feColorMatrix
+                    in="blur"
+                    mode="matrix"
+                    values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 15 -5"
+                    result="glow"
+                  />
+                  <feBlend in="SourceGraphic" in2="glow" mode="screen" />
+                </filter>
+              </defs>
+
+              <!-- Background circle with dark gradient -->
+              <g class="disc">
+                <circle cx="50" cy="50" r="46" fill="url(#bgGlow)" />
+                <circle cx="50" cy="50" r="45" fill="rgba(15, 12, 41, 0.8)" />
+              </g>
+
+              <!-- Revolving ring with glow effect -->
+              <g class="revolve">
+                <circle
+                  class="ring"
+                  cx="50"
+                  cy="50"
+                  r="39"
+                  fill="none"
+                  stroke="url(#ringGrad)"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-dasharray="52 290"
+                />
+              </g>
+              <!-- Orbiting dots -->
+              <g class="orbit">
+                <g class="orbit-track orbit--a">
+                  <circle cx="50" cy="5" r="30" fill="none" />
+                  <circle class="dot" r="0.5" transform="translate(70 14)" />
+                </g>
+
+                <g class="orbit-track orbit--a">
+                  <circle cx="50" cy="50" r="30" fill="none" />
+                  <circle class="dot" r="1" transform="translate(80 40)" />
+                </g>
+
+                <g class="orbit-track orbit--a">
+                  <circle cx="50" cy="50" r="30" fill="none" />
+                  <circle class="dot" r="0.6" transform="translate(40 30)" />
+                </g>
+
+                <g class="orbit-track orbit--b">
+                  <circle cx="50" cy="50" r="23" fill="none" />
+                  <circle class="dot" r="1.4" transform="translate(73 50)" />
+                </g>
+                <g class="orbit-track orbit--c">
+                  <circle cx="50" cy="50" r="36" fill="none" />
+                  <circle class="dot" r="1.2" transform="translate(50 14)" />
+                </g>
+              </g>
+              <!-- Hindi glyph -->
+              <g class="glyph">
+                <text
+                  x="50"
+                  y="61"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                  font-size="56"
+                  font-weight="700"
+                  fill="url(#glyphGrad)"
+                  stroke="rgba(124,77,255,0.35)"
+                  stroke-width="0.5"
+                  style="
+                    paint-order: stroke fill;
+                    font-family: var(--font-devanagari);
+                  "
+                >
+                  श
+                </text>
+              </g>
+            </svg>
+          </div>
+          <h1 class="name">saraansh</h1>
+        </div>
+      </div>
+
+      <div class="summary-container"></div>
+    </div>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> -->
+    <script type="module" src="preview.js"></script>
+  </body>
+</html>

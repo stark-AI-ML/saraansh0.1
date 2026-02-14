@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Writing Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a0639 0%, #0c1b33 100%);
+            padding: 40px 20px;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(20, 10, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: visible;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(138, 43, 226, 0.5);
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #9d4edd, #5a189a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .description {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            max-width: 600px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .input-container {
+            position: relative;
+            padding: 25px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 20px;
+            padding-right: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 16px;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: rgba(10, 5, 24, 0.7);
+            color: #fff;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #7b2cbf;
+            box-shadow: 0 0 0 2px rgba(123, 44, 191, 0.4),
+                        inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .assistant-btn {
+            position: absolute;
+            bottom: 35px;
+            right: 35px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #7b2cbf, #5a189a);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.6);
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .assistant-btn:hover {
+            transform: scale(1.05) rotate(10deg);
+            box-shadow: 0 7px 25px rgba(138, 43, 226, 0.8);
+            background: linear-gradient(45deg, #9d4edd, #7b2cbf);
+        }
+        
+        /* Floating Assistant UI */
+        .floating-assistant {
+            position: fixed;
+            width: 320px;
+            background: rgba(20, 10, 40, 0.95);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.6), 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.4s ease;
+            z-index: 10000;
+            overflow: hidden;
+        }
+        
+        .floating-assistant.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        
+        .assistant-header {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            color: white;
+            background: rgba(30, 15, 60, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            font-size: 20px;
+            flex: 1;
+        }
+        
+        .logo i {
+            margin-right: 12px;
+            font-size: 22px;
+            color: #9d4edd;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(157, 78, 221, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .options {
+            padding: 15px 0;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 12px 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .option:hover {
+            background: rgba(157, 78, 221, 0.15);
+            transform: translateX(5px);
+            border-color: rgba(157, 78, 221, 0.3);
+        }
+        
+        .option i {
+            margin-right: 15px;
+            font-size: 20px;
+            color: #9d4edd;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .option-text {
+            flex: 1;
+            font-weight: 500;
+            font-size: 16px;
+        }
+        
+        .badge {
+            background: linear-gradient(45deg, #7b2cbf, #5a189a);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .footer {
+            padding: 15px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        
+        .instructions {
+            background: rgba(20, 10, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 25px;
+            max-width: 800px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .instructions h2 {
+            color: #9d4edd;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        
+        .instructions ul {
+            padding-left: 30px;
+            line-height: 1.7;
+        }
+        
+        .instructions li {
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .instructions li::marker {
+            color: #7b2cbf;
+        }
+        
+        @media (max-width: 600px) {
+            .floating-assistant {
+                width: 300px;
+                left: 50% !important;
+                transform: translateX(-50%) translateY(20px) scale(0.95);
+            }
+            
+            .floating-assistant.visible {
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+            
+            .assistant-btn {
+                right: 30px;
+                bottom: 30px;
+                width: 45px;
+                height: 45px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Modern Writing Assistant</h1>
+    <p class="description">Transform your writing with AI-powered enhancements and professional tone adjustments</p>
+    
+    <div class="container">
+        <div class="input-container">
+            <textarea placeholder="Start typing or paste your content here...">This is an example text that you can edit. Click the assistant button to get suggestions on how to improve your writing, fix grammar issues, or change the tone of your text.</textarea>
+            <button class="assistant-btn" id="assistantBtn">
+                <i class="fas fa-magic"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="floating-assistant" id="floatingAssistant">
+        <div class="assistant-header">
+            <div class="logo">
+                <i class="fas fa-pen-fancy"></i>
+                <span>WriteAssistant</span>
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn" title="Undo">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button class="nav-btn" title="Redo">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="options">
+            <div class="option">
+                <i class="fas fa-edit"></i>
+                <span class="option-text">Write better</span>
+                <span class="badge">AI</span>
+            </div>
+            <div class="option">
+                <i class="fas fa-spell-check"></i>
+                <span class="option-text">Fix grammar</span>
+            </div>
+            <div class="option">
+                <i class="fas fa-bolt"></i>
+                <span class="option-text">Sound confident</span>
+                <span class="badge">AI</span>
+            </div>
+            <div class="option">
+                <i class="fas fa-text-width"></i>
+                <span class="option-text">Make it concise</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Powered by AI Writing Assistant • v2.0
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h2>How to Use the Writing Assistant</h2>
+        <ul>
+            <li>Type or paste your text in the text area above</li>
+            <li>Click the assistant button inside the input field to open the writing tools</li>
+            <li>Select an option to enhance your text with AI-powered improvements</li>
+            <li>Use the undo/redo buttons in the navigation bar if needed</li>
+            <li>Apply the changes to your text with one click</li>
+            <li>Experiment with different options to find the perfect tone for your content</li>
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const assistantBtn = document.getElementById('assistantBtn');
+            const floatingAssistant = document.getElementById('floatingAssistant');
+            const textarea = document.querySelector('textarea');
+            
+            // Function to position the assistant near the button
+            function positionAssistant() {
+                const btnRect = assistantBtn.getBoundingClientRect();
+                const assistantRect = floatingAssistant.getBoundingClientRect();
+                
+                // Calculate position
+                let top = btnRect.top - assistantRect.height - 15;
+                let left = btnRect.left - (assistantRect.width / 2) + (btnRect.width / 2);
+                
+                // Adjust if it would go off-screen
+                if (top < 20) top = btnRect.bottom + 15;
+                if (left < 20) left = 20;
+                if (left + assistantRect.width > window.innerWidth - 20) {
+                    left = window.innerWidth - assistantRect.width - 20;
+                }
+                
+                floatingAssistant.style.top = top + 'px';
+                floatingAssistant.style.left = left + 'px';
+            }
+            
+            // Toggle the assistant UI
+            assistantBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                positionAssistant();
+                floatingAssistant.classList.toggle('visible');
+            });
+            
+            // Close the assistant when clicking outside
+            document.addEventListener('click', function(e) {
+                if (floatingAssistant.classList.contains('visible') && 
+                    !floatingAssistant.contains(e.target) && 
+                    e.target !== assistantBtn) {
+                    floatingAssistant.classList.remove('visible');
+                }
+            });
+            
+            // Reposition on window resize or scroll
+            window.addEventListener('resize', positionAssistant);
+            window.addEventListener('scroll', positionAssistant);
+            
+            // Add click handlers for options
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const optionText = this.querySelector('.option-text').textContent;
+                    alert(`"${optionText}" feature activated!\nThis would process your text in a real implementation.`);
+                    floatingAssistant.classList.remove('visible');
+                    textarea.focus();
+                });
+            });
+            
+            // Add functionality to nav buttons
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const title = this.getAttribute('title');
+                    alert(`${title} action triggered!`);
+                });
+            });
+            
+            // Close with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && floatingAssistant.classList.contains('visible')) {
+                    floatingAssistant.classList.remove('visible');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

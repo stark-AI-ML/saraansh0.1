@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Sign-In Button</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="saraanshLogo.css" />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        font-family: "Poppins", sans-serif;
+        padding: 20px;
+      }
+
+      
+      .signInGoogle{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
+      .google-signin-btn {
+        --p1: #ffd6ff;
+        --p2: #c8b6ff;
+        --p3: #b28dff;
+        --p4: #7c4dff;
+        --p5: #5b2cff;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 16px 32px;
+        background: linear-gradient(
+          135deg,
+          rgba(15, 12, 41, 0.9),
+          rgba(48, 43, 99, 0.9)
+        );
+        border: 1.5px solid rgba(124, 77, 255, 0.4);
+        border-radius: 14px;
+        color: #c8b6ff;
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(91, 44, 255, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        animation: subtle-bob 7s ease-in-out infinite;
+        will-change: transform, filter;
+        text-decoration: none;
+        max-width: 300px;
+        width: 100%;
+      }
+
+      .google-signin-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 214, 255, 0.1),
+          transparent
+        );
+        transition: left 0.7s ease;
+      }
+
+      .google-signin-btn:hover::before {
+        left: 100%;
+      }
+
+      .google-signin-btn:hover,
+      .google-signin-btn:focus {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(124, 77, 255, 0.5),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        border-color: rgba(124, 77, 255, 0.7);
+        color: #ffd6ff;
+        outline: none;
+      }
+
+      .google-signin-btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(124, 77, 255, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      .google-icon {
+        width: 22px;
+        height: 22px;
+        position: relative;
+        z-index: 2;
+        transition: transform 0.4s ease;
+        filter: drop-shadow(0 0 6px rgba(200, 182, 255, 0.5));
+      }
+
+      .google-signin-btn:hover .google-icon {
+        transform: scale(1.15) rotate(5deg);
+      }
+
+      .btn-text {
+        position: relative;
+        z-index: 2;
+        letter-spacing: 0.3px;
+        text-shadow: 0 0 8px rgba(200, 182, 255, 0.4);
+      }
+
+      /* Glow effect */
+      .google-signin-btn::after {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(135deg, #c8b6ff, #7c4dff, #5b2cff);
+        border-radius: 16px;
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .google-signin-btn:hover::after {
+        opacity: 0.5;
+      }
+
+      /* Orbiting dot animation */
+      .orbit-dot {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: #ffd6ff;
+        border-radius: 50%;
+        filter: drop-shadow(0 0 6px rgba(255, 214, 255, 0.8));
+        opacity: 0;
+        z-index: 1;
+      }
+
+      .dot-1 {
+        top: 10px;
+        left: 10px;
+        animation: orbit-1 6s linear infinite;
+      }
+
+      .dot-2 {
+        bottom: 10px;
+        right: 10px;
+        animation: orbit-2 8s linear infinite;
+      }
+      .dot-3{
+        top: 3;
+      
+        right: 100px;
+        animation: orbit-3 8s linear infinite;
+      }
+
+      /* Animations */
+      @keyframes subtle-bob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-3px);
+        }
+      }
+
+      @keyframes orbit-1 {
+        0% {
+          transform: translate(0, 0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        30% {
+          transform: translate(20px, 15px);
+        }
+        50% {
+          transform: translate(40px, 0);
+          opacity: 1;
+        }
+        70% {
+          transform: translate(20px, -15px);
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(0, 0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes orbit-3 {
+        0% {
+          transform: translate(0, 0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        30% {
+          transform: translate(-20px, -15px);
+        }
+        50% {
+          transform: translate(-40px, 0);
+          opacity: 1;
+        }
+        70% {
+          transform: translate(-20px, 15px);
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(0, 0);
+          opacity: 0;
+        }
+      }
+          @keyframes orbit-2 {
+        0% {
+          transform: translate(1, 0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        30% {
+          transform: translate(-2px, -10px);
+        }
+        50% {
+          transform: translate(-4px, 0);
+          opacity: 1;
+        }
+        70% {
+          transform: translate(-33px, 13px);
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(0, 0);
+          opacity: 0;
+        }
+      }
+
+      /* Accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        .google-signin-btn {
+          animation: none;
+        }
+        .orbit-dot {
+          display: none;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .google-signin-btn {
+          padding: 14px 24px;
+          font-size: 15px;
+        }
+
+        .google-icon {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="signInGoogle">
+
+      <a href="#" class="google-signin-btn" aria-label="Sign in with Google">
+        <span class="orbit-dot dot-1"></span>
+        <span class="orbit-dot dot-2"></span>
+        <span class="orbit-dot dot-3"></span>
+        <svg
+          class="google-icon"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill="#4285F4"
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+          />
+          <path
+            fill="#34A853"
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+          />
+          <path
+            fill="#FBBC05"
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+          />
+          <path
+            fill="#EA4335"
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+          />
+        </svg>
+
+        <span class="btn-text">Sign in with Google</span>
+      </a>
+    </div>
+
+    <script>
+      // Add click handler for the button
+      document
+        .querySelector(".google-signin-btn")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          // In a real application, this would trigger Google OAuth flow
+          alert("Google Sign-In would be triggered here");
+        });
+    </script>
+  </body>
+</html>
